@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ page_title }}</h1>
+        <p class="page-subtitle">Only task name, description, deadline, and hardness are needed.</p>
+    </div>
+
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">Back to tasks</a>
+    </div>
+</div>
+
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button class="btn" type="submit">Save task</button>
+    </form>
+</div>
+{% endblock %}

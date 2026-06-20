@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">AI topics</h1>
+        <p class="page-subtitle">Topics are created automatically by grouping your tasks.</p>
+    </div>
+
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">Back to tasks</a>
+    </div>
+</div>
+
+{% if topics %}
+    <div class="topic-grid">
+        {% for topic in topics %}
+            <a class="topic-card" href="{% url 'topic_detail' topic.id %}">
+                <div class="topic-name">{{ topic.name }}</div>
+                <p class="meta">{{ topic.tasks.count }} tasks in this topic</p>
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h2>No topics yet</h2>
+        <p>Create tasks first. SmartToDo will automatically group them.</p>
+        <a class="btn" href="{% url 'task_create' %}">Create task</a>
+    </div>
+{% endif %}
+{% endblock %}

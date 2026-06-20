@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SmartToDo</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="logo">SmartToDo</div>
+            <div class="logo-subtitle">AI-powered task organizer</div>
+
+            <a class="nav-link" href="{% url 'task_list' %}">All tasks</a>
+            <a class="nav-link" href="{% url 'task_create' %}">Create task</a>
+            <a class="nav-link" href="{% url 'topic_list' %}">AI topics</a>
+            <a class="nav-link" href="/admin/">Admin</a>
+        </aside>
+
+        <main class="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+</body>
+</html>

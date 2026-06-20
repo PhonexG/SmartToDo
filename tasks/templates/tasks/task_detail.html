@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ task.title }}</h1>
+        <p class="page-subtitle">Task details and quick status actions.</p>
+    </div>
+
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url 'task_edit' task.id %}">Edit task</a>
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">Back to tasks</a>
+    </div>
+</div>
+
+<div class="card detail-card">
+    <div class="badges">
+        <span class="badge badge-topic">
+            {% if task.topic %}
+                {{ task.topic.name }}
+            {% else %}
+                No topic
+            {% endif %}
+        </span>
+
+        <span class="badge badge-status">
+            {{ task.get_status_display }}
+        </span>
+
+        <span class="badge badge-{{ task.risk_level }}">
+            {{ task.get_risk_level_display }} risk
+        </span>
+    </div>
+
+    <div class="description-box">
+        {% if task.description %}
+            {{ task.description }}
+        {% else %}
+            No description.
+        {% endif %}
+    </div>
+
+    <p class="meta">Deadline: {{ task.deadline|date:"d/m/Y" }}</p>
+    <p class="meta">Hardness: {{ task.get_hardness_display }}</p>
+
+    <div class="chance-box">
+        <div class="chance-row">
+            <span>Completion chance</span>
+            <span>{{ task.completion_chance }}%</span>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ task.completion_chance }}%;"></div>
+        </div>
+    </div>
+
+    {% if task.ai_explanation %}
+        <div class="description-box">
+            <strong>AI explanation:</strong>
+            <p>{{ task.ai_explanation }}</p>
+        </div>
+    {% endif %}
+
+    <div class="status-actions">
+        <form method="post" action="{% url 'task_change_status' task.id 'todo' %}">
+            {% csrf_token %}
+            <button class="status-btn" type="submit">Todo</button>
+        </form>
+
+        <form method="post" action="{% url 'task_change_status' task.id 'in_progress' %}">
+            {% csrf_token %}
+            <button class="status-btn" type="submit">In progress</button>
+        </form>
+
+        <form method="post" action="{% url 'task_change_status' task.id 'done' %}">
+            {% csrf_token %}
+            <button class="status-btn" type="submit">Done</button>
+        </form>
+    </div>
+
+    <br>
+
+    <form method="post" action="{% url 'task_delete' task.id %}">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit">Delete task</button>
+    </form>
+</div>
+{% endblock %}

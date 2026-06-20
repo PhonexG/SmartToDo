@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ topic.name }}</h1>
+        <p class="page-subtitle">Tasks grouped under this AI topic.</p>
+    </div>
+
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url 'topic_list' %}">Back to topics</a>
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">All tasks</a>
+    </div>
+</div>
+
+{% if tasks %}
+    <div class="grid">
+        {% for task in tasks %}
+            <div class="card">
+                <h2 class="card-title">
+                    <a href="{% url 'task_detail' task.id %}">
+                        {{ task.title }}
+                    </a>
+                </h2>
+
+                <div class="badges">
+                    <span class="badge badge-status">
+                        {{ task.get_status_display }}
+                    </span>
+
+                    <span class="badge badge-{{ task.risk_level }}">
+                        {{ task.get_risk_level_display }} risk
+                    </span>
+                </div>
+
+                <p class="meta">Deadline: {{ task.deadline|date:"d/m/Y" }}</p>
+                <p class="meta">Hardness: {{ task.get_hardness_display }}</p>
+
+                <div class="chance-box">
+                    <div class="chance-row">
+                        <span>Completion chance</span>
+                        <span>{{ task.completion_chance }}%</span>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ task.completion_chance }}%;"></div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h2>No tasks here</h2>
+        <p>This topic has no tasks yet.</p>
+    </div>
+{% endif %}
+{% endblock %}
