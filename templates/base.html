@@ -12,10 +12,20 @@
             <div class="logo">SmartToDo</div>
             <div class="logo-subtitle">AI-powered task organizer</div>
 
-            <a class="nav-link" href="{% url 'task_list' %}">All tasks</a>
-            <a class="nav-link" href="{% url 'task_create' %}">Create task</a>
-            <a class="nav-link" href="{% url 'topic_list' %}">AI topics</a>
-            <a class="nav-link" href="/admin/">Admin</a>
+            {% if user.is_authenticated %}
+                <a class="nav-link" href="{% url 'task_list' %}">All tasks</a>
+                <a class="nav-link" href="{% url 'task_create' %}">Create task</a>
+                <a class="nav-link" href="{% url 'topic_list' %}">AI topics</a>
+                <a class="nav-link" href="/admin/">Admin</a>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="nav-link logout-button" type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                <a class="nav-link" href="{% url 'register' %}">Register</a>
+            {% endif %}
         </aside>
 
         <main class="main-content">

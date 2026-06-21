@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
+from ai_tools.chance import calculate_completion_chance, get_risk_level, get_ai_explanation
 
 from ai_tools.topic_grouping import assign_topic_to_task
 
@@ -43,6 +44,10 @@ def task_create_view(request):
 
             # Automatically creates or assigns topic based on task text.
             assign_topic_to_task(task)
+            task.completion_chance = calculate_completion_chance(task)
+            task.risk_level = get_risk_level(task.completion_chance)
+            task.ai_explanation = get_ai_explanation(task, task.completion_chance)
+            task.save(update_fields=["completion_chance", "risk_level", "ai_explanation"])
 
             return redirect("task_detail", task_id=task.id)
 
@@ -71,6 +76,10 @@ def task_edit_view(request, task_id):
 
             # Recalculate topic if title or description was changed.
             assign_topic_to_task(task)
+            task.completion_chance = calculate_completion_chance(task)
+            task.risk_level = get_risk_level(task.completion_chance)
+            task.ai_explanation = get_ai_explanation(task, task.completion_chance)
+            task.save(update_fields=["completion_chance", "risk_level", "ai_explanation"])
 
             return redirect("task_detail", task_id=task.id)
 
@@ -113,7 +122,16 @@ def task_change_status_view(request, task_id, status):
 
     if status in allowed_statuses:
         task.status = status
-        task.save(update_fields=["status"])
+        task.completion_chance = calculate_completion_chance(task)
+        task.risk_level = get_risk_level(task.completion_chance)
+        task.ai_explanation = get_ai_explanation(task, task.completion_chance)
+
+        task.save(update_fields=[
+            "status",
+            "completion_chance",
+            "risk_level",
+            "ai_explanation"
+        ])
 
     return redirect("task_list")
 
