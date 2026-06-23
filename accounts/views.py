@@ -10,7 +10,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("task_list")
+            return redirect("dashboard")
 
     else:
         form = RegisterForm()
