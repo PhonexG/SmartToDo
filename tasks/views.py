@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from ai_tools.chance import calculate_completion_chance, get_risk_level, get_ai_explanation
+from django.utils import timezone
 
+from ai_tools.chance import calculate_completion_chance, get_risk_level, get_ai_explanation
 from ai_tools.topic_grouping import assign_topic_to_task
 
 from .forms import TaskForm
@@ -11,10 +12,25 @@ from .models import Topic, Task
 
 @login_required
 def task_list_view(request):
-    tasks = Task.objects.filter(user=request.user).order_by("deadline")
+    current_filter = request.GET.get("filter")
+    tasks = Task.objects.filter(user=request.user)
+
+    today = timezone.localdate()
+
+    filter_map = {
+        "todo": lambda qs: qs.filter(status="todo"),
+        "in_progress": lambda qs: qs.filter(status="in_progress"),
+        "done": lambda qs: qs.filter(status="done"),
+        "high_risk": lambda qs: qs.filter(risk_level="high"),
+        "overdue": lambda qs: qs.filter(deadline__lt=today).exclude(status="done"),
+    }
+
+    tasks = filter_map.get(current_filter, lambda qs: qs)(tasks)
+    tasks = tasks.order_by("deadline")
 
     return render(request, "tasks/task_list.html", {
-        "tasks": tasks
+        "tasks": tasks,
+        "current_filter": current_filter,
     })
 
 

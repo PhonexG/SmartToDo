@@ -13,6 +13,21 @@
     </div>
 </div>
 
+<div class="filter-panel">
+    <form method="get" class="filter-form">
+        <label for="filter">Filter tasks</label>
+
+        <select name="filter" id="filter" onchange="this.form.submit()">
+            <option value="" {% if not current_filter %}selected{% endif %}>All tasks</option>
+            <option value="todo" {% if current_filter == "todo" %}selected{% endif %}>Todo</option>
+            <option value="in_progress" {% if current_filter == "in_progress" %}selected{% endif %}>In progress</option>
+            <option value="done" {% if current_filter == "done" %}selected{% endif %}>Done</option>
+            <option value="high_risk" {% if current_filter == "high_risk" %}selected{% endif %}>High risk</option>
+            <option value="overdue" {% if current_filter == "overdue" %}selected{% endif %}>Overdue</option>
+        </select>
+    </form>
+</div>
+
 {% if tasks %}
     <div class="grid">
         {% for task in tasks %}
@@ -76,9 +91,15 @@
     </div>
 {% else %}
     <div class="empty-state">
-        <h2>No tasks yet</h2>
-        <p>Create your first task and SmartToDo will group it by topic.</p>
-        <a class="btn" href="{% url 'task_create' %}">Create task</a>
+        <h2>No tasks found</h2>
+
+        {% if current_filter %}
+            <p>No tasks match this filter.</p>
+            <a class="btn btn-secondary" href="{% url 'task_list' %}">Show all tasks</a>
+        {% else %}
+            <p>Create your first task and SmartToDo will group it by topic.</p>
+            <a class="btn" href="{% url 'task_create' %}">Create task</a>
+        {% endif %}
     </div>
 {% endif %}
 {% endblock %}
