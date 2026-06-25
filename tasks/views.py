@@ -61,7 +61,7 @@ def task_create_view(request):
             # Automatically creates or assigns topic based on task text.
             assign_topic_to_task(task)
             task.completion_chance = calculate_completion_chance(task)
-            task.risk_level = get_risk_level(task.completion_chance)
+            task.risk_level = get_risk_level(task, task.completion_chance)
             task.ai_explanation = get_ai_explanation(task, task.completion_chance)
             task.save(update_fields=["completion_chance", "risk_level", "ai_explanation"])
 
