@@ -58,6 +58,14 @@
 
                 <p class="meta">Deadline: {{ task.deadline|date:"d/m/Y" }}</p>
                 <p class="meta">Hardness: {{ task.get_hardness_display }}</p>
+                <p class="meta">
+                    Priority:
+                    <strong>{{ task.priority }}/100</strong>
+                </p>
+
+                <span class="badge badge-{{ task.priority_level }}">
+                    {{ task.get_priority_level_display }}
+                </span>
 
                 <div class="chance-box">
                     <div class="chance-row">

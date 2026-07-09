@@ -56,6 +56,21 @@ class Task(models.Model):
         related_name="tasks"
     )
 
+    priority = models.PositiveSmallIntegerField(default=0)
+
+    PRIORITY_LEVEL_CHOICES = [
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
+        ("critical", "Critical"),
+    ]
+
+    priority_level = models.CharField(
+        max_length=10,
+        choices=PRIORITY_LEVEL_CHOICES,
+        default="low",
+    )
+
     # main task title
     title = models.CharField(max_length=150)
     # additional information

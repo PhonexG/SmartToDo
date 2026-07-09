@@ -1,96 +1,142 @@
+```html
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="page-header">
     <div>
         <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Your task overview for today.</p>
+        <p class="page-subtitle">
+            Smart overview of your tasks.
+        </p>
     </div>
 
     <div class="actions">
-        <a class="btn" href="{% url 'task_create' %}">+ Create task</a>
-        <a class="btn btn-secondary" href="{% url 'task_list' %}">All tasks</a>
+        <a class="btn" href="{% url 'task_create' %}">
+            + Create task
+        </a>
+
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">
+            All tasks
+        </a>
     </div>
 </div>
 
+
 <div class="grid">
+
     <div class="card">
-        <h2 class="card-title">Total tasks</h2>
-        <p class="meta">{{ total_tasks }}</p>
+        <h2>Total tasks</h2>
+        <h1>{{ total_tasks }}</h1>
     </div>
 
     <div class="card">
-        <h2 class="card-title">Todo</h2>
-        <p class="meta">{{ todo_tasks }}</p>
+        <h2>Todo</h2>
+        <h1>{{ todo_tasks }}</h1>
     </div>
 
     <div class="card">
-        <h2 class="card-title">In progress</h2>
-        <p class="meta">{{ in_progress_tasks }}</p>
+        <h2>In progress</h2>
+        <h1>{{ in_progress_tasks }}</h1>
     </div>
 
     <div class="card">
-        <h2 class="card-title">Done</h2>
-        <p class="meta">{{ done_tasks }}</p>
+        <h2>Done</h2>
+        <h1>{{ done_tasks }}</h1>
     </div>
 
     <div class="card">
-        <h2 class="card-title">High risk</h2>
-        <p class="meta">{{ high_risk_tasks }}</p>
+        <h2>High risk</h2>
+        <h1>{{ high_risk_tasks }}</h1>
     </div>
 
     <div class="card">
-        <h2 class="card-title">Overdue</h2>
-        <p class="meta">{{ overdue_tasks.count }}</p>
+        <h2>Overdue</h2>
+        <h1>{{ overdue_tasks.count }}</h1>
     </div>
+
 </div>
 
-<br>
+
+<br><br>
+
 
 <div class="grid">
-    <div class="card">
-        <h2 class="card-title">Tasks for today</h2>
 
+    <div class="card">
+        <h2 class="card-title">
+            Tasks for today
+        </h2>
         {% for task in today_tasks %}
-            <p class="meta">
+            <p>
                 <a href="{% url 'task_detail' task.id %}">
                     {{ task.title }}
                 </a>
-                — {{ task.get_status_display }}
+                <br>
+                <span class="badge badge-{{ task.priority_level }}">
+                    {{ task.get_priority_level_display }}
+                </span>
             </p>
         {% empty %}
-            <p class="meta">No tasks for today.</p>
+            <p>No tasks for today.</p>
+        {% endfor %}
+    </div>
+
+
+    <div class="card">
+
+        <h2 class="card-title">
+            Top Priority Tasks
+        </h2>
+
+        {% for task in priority_tasks %}
+
+            <div style="margin-bottom:20px;">
+
+                <h3>
+                    <a href="{% url 'task_detail' task.id %}">
+                        {{ task.title }}
+                    </a>
+                </h3>
+
+                <p>
+                    Priority:
+                    <strong>{{ task.priority }}/100</strong>
+                </p>
+
+                <span class="badge badge-{{ task.priority_level }}">
+                    {{ task.get_priority_level_display }}
+                </span>
+
+                <p class="meta">
+                    Deadline:
+                    {{ task.deadline|date:"d/m/Y" }}
+                </p>
+            </div>
+        {% empty %}
+            <p>No priority tasks.</p>
         {% endfor %}
     </div>
 
     <div class="card">
-        <h2 class="card-title">Upcoming tasks</h2>
-
-        {% for task in upcoming_tasks %}
-            <p class="meta">
-                <a href="{% url 'task_detail' task.id %}">
-                    {{ task.title }}
-                </a>
-                — {{ task.deadline|date:"d/m/Y" }}
-            </p>
-        {% empty %}
-            <p class="meta">No upcoming tasks.</p>
-        {% endfor %}
-    </div>
-
-    <div class="card">
-        <h2 class="card-title">Overdue tasks</h2>
-
+        <h2 class="card-title">
+            Overdue Tasks
+        </h2>
         {% for task in overdue_tasks %}
-            <p class="meta">
+            <p>
                 <a href="{% url 'task_detail' task.id %}">
                     {{ task.title }}
                 </a>
-                — {{ task.deadline|date:"d/m/Y" }}
+                <br>
+                <strong>
+                    {{ task.deadline|date:"d/m/Y" }}
+                </strong>
             </p>
         {% empty %}
-            <p class="meta">No overdue tasks.</p>
+            <p>No overdue tasks.</p>
         {% endfor %}
     </div>
 </div>
+
 {% endblock %}
+```

@@ -402,3 +402,23 @@ a {
 .filter-form select:focus {
     box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.35);
 }
+
+.badge-critical {
+    background: #dc2626;
+    color: white;
+}
+
+.badge-high {
+    background: #f97316;
+    color: white;
+}
+
+.badge-medium {
+    background: #eab308;
+    color: black;
+}
+
+.badge-low {
+    background: #22c55e;
+    color: white;
+}

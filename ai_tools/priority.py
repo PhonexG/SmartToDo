@@ -1,6 +1,5 @@
 from django.utils import timezone
 
-
 DEADLINE_WEIGHT = 35
 HARDNESS_WEIGHT = 25
 STATUS_WEIGHT = 15
@@ -9,15 +8,15 @@ CHANCE_WEIGHT = 10
 
 
 def calculate_priority(task):
-    score = 0
+    score = (
+        calculate_deadline(task)
+        + calculate_hardness(task)
+        + calculate_status(task)
+        + calculate_risk(task)
+        + calculate_chance(task)
+    )
 
-    score += calculate_deadline(task)
-    score += calculate_hardness(task)
-    score += calculate_status(task)
-    score += calculate_risk(task)
-    score += calculate_chance(task)
-
-    return score
+    return min(score, 100)
 
 
 def calculate_deadline(task):
@@ -26,22 +25,22 @@ def calculate_deadline(task):
 
     if days_left <= 0:
         return DEADLINE_WEIGHT
-    elif days_left == 1:
+    elif days_left <= 1:
         return 30
     elif days_left <= 3:
-        return 25
+        return 24
     elif days_left <= 7:
-        return 18
+        return 16
     elif days_left <= 14:
-        return 10
+        return 8
     else:
-        return 5
+        return 2
 
 
 def calculate_hardness(task):
     mapping = {
-        "easy": 5,
-        "medium": 15,
+        "easy": 8,
+        "medium": 17,
         "hard": HARDNESS_WEIGHT,
     }
 
@@ -60,8 +59,8 @@ def calculate_status(task):
 
 def calculate_risk(task):
     mapping = {
-        "low": 5,
-        "medium": 10,
+        "low": 4,
+        "medium": 9,
         "high": RISK_WEIGHT,
     }
 
@@ -69,15 +68,15 @@ def calculate_risk(task):
 
 
 def calculate_chance(task):
-    chance = task.completion_chance
+    chance = max(0, min(task.completion_chance, 100))
+    return round((100 - chance) / 100 * CHANCE_WEIGHT)
 
-    if chance >= 90:
-        return 0
-    elif chance >= 70:
-        return 3
-    elif chance >= 50:
-        return 6
-    elif chance >= 30:
-        return 8
+def get_priority_level(priority):
+    if priority >= 80:
+        return "critical"
+    elif priority >= 60:
+        return "high"
+    elif priority >= 40:
+        return "medium"
     else:
-        return CHANCE_WEIGHT
+        return "low"

@@ -1,27 +1,41 @@
+```html
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="page-header">
     <div>
         <h1 class="page-title">{{ task.title }}</h1>
-        <p class="page-subtitle">Task details and quick status actions.</p>
+        <p class="page-subtitle">
+            Task details and AI analysis
+        </p>
     </div>
 
     <div class="actions">
-        <a class="btn btn-secondary" href="{% url 'task_edit' task.id %}">Edit task</a>
-        <a class="btn btn-secondary" href="{% url 'task_list' %}">Back to tasks</a>
+        <a class="btn" href="{% url 'task_edit' task.id %}">
+            Edit
+        </a>
+
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">
+            Back
+        </a>
+
+        <a class="btn btn-danger" href="{% url 'task_delete' task.id %}">
+            Delete
+        </a>
     </div>
 </div>
 
+
 <div class="card detail-card">
+
     <div class="badges">
-        <span class="badge badge-topic">
-            {% if task.topic %}
+
+        {% if task.topic %}
+            <span class="badge badge-topic">
                 {{ task.topic.name }}
-            {% else %}
-                No topic
-            {% endif %}
-        </span>
+            </span>
+        {% endif %}
 
         <span class="badge badge-status">
             {{ task.get_status_display }}
@@ -30,59 +44,71 @@
         <span class="badge badge-{{ task.risk_level }}">
             {{ task.get_risk_level_display }} risk
         </span>
+
+        <span class="badge badge-{{ task.priority_level }}">
+            {{ task.get_priority_level_display }}
+        </span>
+
     </div>
+
 
     <div class="description-box">
-        {% if task.description %}
-            {{ task.description }}
-        {% else %}
-            No description.
-        {% endif %}
+        {{ task.description|linebreaks }}
     </div>
 
-    <p class="meta">Deadline: {{ task.deadline|date:"d/m/Y" }}</p>
-    <p class="meta">Hardness: {{ task.get_hardness_display }}</p>
+
+    <p><strong>Deadline:</strong> {{ task.deadline|date:"d/m/Y" }}</p>
+
+    <p><strong>Hardness:</strong> {{ task.get_hardness_display }}</p>
+
+    <p><strong>Priority:</strong> {{ task.priority }}/100</p>
+
+    <p>
+        <strong>Priority level:</strong>
+
+        <span class="badge badge-{{ task.priority_level }}">
+            {{ task.get_priority_level_display }}
+        </span>
+    </p>
+
+    <p>
+        <strong>Completion chance:</strong>
+        {{ task.completion_chance }}%
+    </p>
+
 
     <div class="chance-box">
+
         <div class="chance-row">
             <span>Completion chance</span>
             <span>{{ task.completion_chance }}%</span>
         </div>
 
         <div class="progress-bar">
-            <div class="progress-fill" style="width: {{ task.completion_chance }}%;"></div>
+            <div
+                class="progress-fill"
+                style="width: {{ task.completion_chance }}%;"
+            ></div>
         </div>
+
     </div>
 
-    {% if task.ai_explanation %}
-        <div class="description-box">
-            <strong>AI explanation:</strong>
-            <p>{{ task.ai_explanation }}</p>
-        </div>
-    {% endif %}
-
-    <div class="status-actions">
-        <form method="post" action="{% url 'task_change_status' task.id 'todo' %}">
-            {% csrf_token %}
-            <button class="status-btn" type="submit">Todo</button>
-        </form>
-
-        <form method="post" action="{% url 'task_change_status' task.id 'in_progress' %}">
-            {% csrf_token %}
-            <button class="status-btn" type="submit">In progress</button>
-        </form>
-
-        <form method="post" action="{% url 'task_change_status' task.id 'done' %}">
-            {% csrf_token %}
-            <button class="status-btn" type="submit">Done</button>
-        </form>
-    </div>
 
     <br>
 
-    <form method="post" action="{% url 'task_delete' task.id %}">
-        {% csrf_token %}
-        <button class="btn btn-danger" type="submit">Delete task</button>
-    </form>
+    <h2>AI Analysis</h2>
+
+    <div class="description-box">
+
+        {% if task.ai_explanation %}
+            {{ task.ai_explanation }}
+        {% else %}
+            AI analysis is not available.
+        {% endif %}
+
+    </div>
+
 </div>
+
 {% endblock %}
+```
