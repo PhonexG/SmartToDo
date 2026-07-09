@@ -1,4 +1,5 @@
 from django.utils import timezone
+from ai_tools.llm import ask_ai
 
 
 def calculate_completion_chance(task):
@@ -79,44 +80,30 @@ def get_risk_level(task_or_chance, chance=None):
 
 
 def get_ai_explanation(task, chance):
-    today = timezone.localdate()
-    days_left = (task.deadline - today).days
+    prompt = f"""
+You are an AI assistant for a Smart Todo application.
 
-    if task.status == "done":
-        return "This task is already completed, so the completion chance is 100%."
+Task title:
+{task.title}
 
-    reasons = []
+Description:
+{task.description}
 
-    if days_left < 0:
-        reasons.append("the deadline has already passed")
-    elif days_left == 0:
-        reasons.append("the deadline is today")
-    elif days_left <= 3:
-        reasons.append("the deadline is very close")
-    elif days_left > 14:
-        reasons.append("there is enough time before the deadline")
+Deadline:
+{task.deadline}
 
-    if task.hardness == "easy":
-        reasons.append("the task is easy")
-    elif task.hardness == "hard":
-        reasons.append("the task is hard")
-    elif task.hardness == "very_hard":
-        reasons.append("the task is very hard")
+Difficulty:
+{task.get_hardness_display()}
 
-    if task.status == "in_progress":
-        reasons.append("the task is already in progress")
+Completion chance:
+{chance}%
 
-    if not task.description.strip():
-        reasons.append("the task description is empty, so planning may be less clear")
+Risk:
+{task.risk_level}
 
-    if chance >= 75:
-        result = "This task has a high completion chance"
-    elif chance >= 45:
-        result = "This task has a medium completion chance"
-    else:
-        result = "This task has a low completion chance"
+Explain in 2-3 short sentences:
+- why this task has this risk
+- what the user should do next
+"""
 
-    if reasons:
-        return result + " because " + ", ".join(reasons) + "."
-
-    return result + " based on its deadline, hardness, and current status."
+    return ask_ai(prompt)
